@@ -1,0 +1,2 @@
+## nittany path api
+### This is the backend portion of the nittany path application. This will handle the network requests and the database instructions. It is very likely that this will be more extensive than the front end portion.
