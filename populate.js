@@ -1,326 +1,310 @@
-// const db = require('./database');
+console.log('hello world');
 
-// db.execute(
-// 	`
-//   INSERT INTO users (name, age)
-//   VALUES (?, ?)
-// `,
-// 	[ 'beth', 22 ],
-// 	(err, results, fields) => {
-// 		if (err) {
-// 			console.log(err);
-// 		}
-
-// 		console.log(results);
-// 		console.log(fields);
-// 	}
-// );
-
+const csv = require('csv-parser');
 const fs = require('fs');
-const readline = require('readline');
 const db = require('./database');
+const results = [ 'ender' ];
 
-const processLine = async function() {
-	const fileStream1 = fs.createReadStream('./csv/Professors.csv');
+fs.createReadStream('./csv/Professors.csv').pipe(csv()).on('data', (data) => {
+	let name = data.Name;
+	let email = data.Email;
+	let password = data.Password;
+	let age = data.Age;
+	let gender = data.Gender;
+	let department = data.Department;
+	let office = data.Office;
+	let departmentName = data['Department Name'];
+	let title = data.Title;
+	let teachingTeamId = data['Teaching Team ID'];
+	let teaching = data.Teaching;
 
-	const rl = readline.createInterface({
-		input: fileStream1
-	});
-
-	rl.on('line', (line) => {
-		let arr = line.split(',');
-		if (arr[0] === 'Name') return;
-		console.log(arr);
-
-		let name = arr[0];
-		let email = arr[1];
-		let password = arr[2];
-		let age = parseInt(arr[3], 10);
-		let gender = arr[4];
-		let department = arr[5];
-		let office = arr[6].slice(1) + arr[7].slice(0, arr[7].length - 1);
-		let departmentName = arr[8];
-		let title = arr[9];
-		let teachingTeamId = parseInt(arr[10], 10);
-		let teaching = arr[11];
-
-		db.execute(
-			`
-		  INSERT INTO professors (email, password, name, age, gender, office_address, department, title)
+	db.execute(
+		`
+		  INSERT IGNORE INTO professors (email, password, name, age, gender, office_address, department, title)
 		  VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 		`,
-			[ email, password, name, age, gender, office, department, title ]
-		);
+		[ email, password, name, age, gender, office, department, title ]
+	);
 
-		db.execute(
-			`
-		  INSERT INTO prof_teaching_teams (prof_email, teaching_team_id)
+	db.execute(
+		`
+		  INSERT IGNORE INTO prof_teaching_teams (prof_email, teaching_team_id)
 		  VALUES (?, ?)
 		`,
-			[ email, teachingTeamId ]
-		);
+		[ email, teachingTeamId ]
+	);
 
-		if (title === 'Head') {
-			db.execute(
-				`
-		    INSERT INTO departments (dept_id, dept_name, dept_head)
+	if (title === 'Head') {
+		db.execute(
+			`
+		    INSERT IGNORE INTO departments (dept_id, dept_name, dept_head)
 		    VALUES (?, ?, ?)
 		  `,
-				[ department, departmentName, name ]
-			);
-		}
-	});
+			[ department, departmentName, name ]
+		);
+	}
+});
 
-	const fileStream2 = fs.createReadStream('./csv/Students_TA.csv');
+fs.createReadStream('./csv/Students_TA.csv').pipe(csv()).on('data', (data) => {
+	let fullName = data['Full Name'];
+	let email = data.Email;
+	let age = data.Age;
+	let zip = data.Zip;
+	let phone = data.Phone;
+	let gender = data.Gender;
+	let city = data.City;
+	let state = data.State;
+	let password = data.Password;
+	let street = data.Street;
+	let major = data.Major;
+	let courseOne = data['Courses 1'];
+	let courseOneName = data['Course 1 Name'];
+	let courseOneDetails = data['Course 1 Details'];
+	let courseOneSection = data['Course 1 Section'];
+	let courseOneSectionLimit = data['Course 1 Section Limit'];
+	let courseOneHomeworkNo = data['Course 1 HW_No'];
+	let courseOneHomeworkDetails = data['Course 1 HW_Details'];
+	let courseOneHomeworkGrade = data['Course 1 HW_Grade'];
+	let courseOneExamNo = data['Course 1 EXAM_No'];
+	let courseOneExamDetails = data['Course 1 Exam_Details'];
+	let courseOneExamGrade = data['Course 1 EXAM_Grade'];
+	let courseTwo = data['Courses 2'];
+	let courseTwoName = data['Course 2 Name'];
+	let courseTwoDetails = data['Course 2 Details'];
+	let courseTwoSection = data['Course 2 Section'];
+	let courseTwoSectionLimit = data['Course 2 Section Limit'];
+	let courseTwoHomeworkNo = data['Course 2 HW_No'];
+	let courseTwoHomeworkDetails = data['Course 2 HW_Details'];
+	let courseTwoHomeworkGrade = data['Course 2 HW_Grade'];
+	let courseTwoExamNo = data['Course 2 EXAM_No'];
+	let courseTwoExamDetails = data['Course 2 Exam_Details'];
+	let courseTwoExamGrade = data['Course 2 EXAM_Grade'];
+	let courseThree = data['Courses 3'];
+	let courseThreeName = data['Course 3 Name'];
+	let courseThreeDetails = data['Course 3 Details'];
+	let courseThreeSection = data['Course 3 Section'];
+	let courseThreeSectionLimit = data['Course 3 Section Limit'];
+	let courseThreeHomeworkNo = data['Course 3 HW_No'];
+	let courseThreeHomeworkDetails = data['Course 3 HW_Details'];
+	let courseThreeHomeworkGrade = data['Course 3 HW_Grade'];
+	let courseThreeExamNo = data['Course 3 EXAM_No'];
+	let courseThreeExamDetails = data['Course 3 Exam_Details'];
+	let courseThreeExamGrade = data['Course 3 EXAM_Grade'];
+	let teachingTeamId = data['Teaching Team ID'];
 
-	const r2 = readline.createInterface({
-		input: fileStream2
-	});
-
-	r2.on('line', (line) => {
-		let arr = line.split(',');
-		if (arr[0] === 'Full Name') {
-			console.log('first line return');
-			return;
-		}
-		console.log('redners');
-
-		let fullName = arr[0];
-		let email = arr[1];
-		let age = parseInt(arr[2], 10);
-		let zip = parseInt(arr[3], 10);
-		let phone = arr[4];
-		let gender = arr[5];
-		let city = arr[6];
-		let state = arr[7];
-		let password = arr[8];
-		let street = arr[9].slice(0, arr[9].length - 1);
-		let major = arr[10];
-		let courseOne = arr[11];
-		let courseOneName = arr[12];
-		let courseOneDetails = arr[13];
-		let courseOneSection = parseInt(arr[14], 10);
-		let courseOneSectionLimit = parseInt(arr[15], 10);
-		let courseOneHomeworkNo = parseInt(arr[16], 10);
-		let courseOneHomeworkDetails = arr[17];
-		let courseOneHomeworkGrade = arr[18];
-		let courseOneExamNo = parseInt(arr[19], 10);
-		let courseOneExamDetails = arr[20];
-		let courseOneExamGrade = arr[21];
-		let courseTwo = arr[22];
-		let courseTwoName = arr[23];
-		let courseTwoDetails = arr[24];
-		let courseTwoSection = parseInt(arr[25], 10);
-		let courseTwoSectionLimit = parseInt(arr[26], 10);
-		let courseTwoHomeworkNo = parseInt(arr[27], 10);
-		let courseTwoHomeworkDetails = arr[28];
-		let courseTwoHomeworkGrade = arr[29];
-		let courseTwoExamNo = parseInt(arr[30], 10);
-		let courseTwoExamDetails = arr[31];
-		let courseTwoExamGrade = arr[32];
-		let courseThree = arr[33];
-		let courseThreeName = arr[34];
-		let courseThreeDetails = arr[35];
-		let courseThreeSection = parseInt(arr[36], 10);
-		let courseThreeSectionLimit = parseInt(arr[37], 10);
-		let courseThreeHomeworkNo = parseInt(arr[38], 10);
-		let courseThreeHomeworkDetails = arr[39];
-		let courseThreeHomeworkGrade = arr[40];
-		let courseThreeExamNo = parseInt(arr[41], 10);
-		let courseThreeExamDetails = arr[42];
-		let courseThreeExamGrade = arr[43];
-		let teachingTeamId = parseInt(arr[44], 10);
-
-		console.log(courseOne, courseOneName, courseOneDetails);
-
-		db.execute(
-			`
-			INSERT INTO students (email, password, name, age, gender, major, street, zipcode)
+	// STUDENTS
+	db.execute(
+		`
+			INSERT IGNORE INTO students (email, password, name, age, gender, major, street, zipcode)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 		`,
-			[ email, password, fullName, age, gender, major, street, zip ]
-		);
+		[ email, password, fullName, age, gender, major, street, zip ]
+	);
 
-		db.execute(
-			`
-			INSERT INTO zipcodes (zipcode, city, state)
+	// ZIPCODES
+	db.execute(
+		`
+			INSERT IGNORE INTO zipcodes (zipcode, city, state)
 			VALUES (?, ?, ?)
 		`,
-			[ zip, city, state ]
-		);
+		[ zip, city, state ]
+	);
 
-		// no deadline?
-		db.execute(
-			`
-			INSERT INTO courses (course_id, course_name, course_description)
-			VALUES (?, ?, ?)
-			`,
-			[ courseOne, courseOneName, courseOneDetails ]
-		);
-		db.execute(
-			`
-			INSERT INTO courses (course_id, course_name, course_description)
-			VALUES (?, ?, ?)
-			`,
-			[ courseTwo, courseTwoName, courseTwoDetails ]
-		);
-		db.execute(
-			`
-			INSERT INTO courses (course_id, course_name, course_description)
-			VALUES (?, ?, ?)
-			`,
-			[ courseThree, courseThreeName, courseThreeDetails ],
-			(err) => console.log(err)
-		);
-
-		/*
-		// only 1?
-		db.execute(
-			`
-			INSERT INTO sections (course_id, sec_no, limit, teaching_team_id)
+	// COURSES
+	db.execute(
+		`
+			INSERT IGNORE INTO courses (course_id, course_name, course_description, late_drop_deadline)
 			VALUES (?, ?, ?, ?)
 			`,
-			[ courseOne, courseOneSection, courseOneSectionLimit, teachingTeamId ]
-		);
-		db.execute(
-			`
-			INSERT INTO sections (course_id, sec_no, limit, teaching_team_id)
+		[ courseOne, courseOneName, courseOneDetails, 'January 1st, 2021' ]
+	);
+	db.execute(
+		`
+			INSERT IGNORE INTO courses (course_id, course_name, course_description, late_drop_deadline)
 			VALUES (?, ?, ?, ?)
 			`,
-			[ courseTwo, courseTwoSection, courseTwoSectionLimit, teachingTeamId ]
-		);
-		db.execute(
-			`
-			INSERT INTO sections (course_id, sec_no, limit, teaching_team_id)
+		[ courseTwo, courseTwoName, courseTwoDetails, 'January 1st, 2021' ]
+	);
+	db.execute(
+		`
+			INSERT IGNORE INTO courses (course_id, course_name, course_description, late_drop_deadline)
 			VALUES (?, ?, ?, ?)
 			`,
-			[ courseThree, courseThreeSection, courseThreeSectionLimit, teachingTeamId ]
-		);
+		[ courseThree, courseThreeName, courseThreeDetails, 'January 1st, 2021' ]
+	);
 
-		
-		db.execute(
-			`
-			INSERT INTO enrolls (student_email, course_id, sec_no)
-			VALUES (?, ?, ?)
-			`,
-			[ email, courseOne, courseOneSection ]
-		);
-		db.execute(
-			`
-			INSERT INTO enrolls (student_email, course_id, sec_no)
-			VALUES (?, ?, ?)
-			`,
-			[ email, courseTwo, courseTwoSection ]
-		);
-		db.execute(
-			`
-			INSERT INTO enrolls (student_email, course_id, sec_no)
-			VALUES (?, ?, ?)
-			`,
-			[ email, courseThree, courseThreeSection ]
-		);
+	// SECTIONS
+	db.execute(
+		`
+		INSERT IGNORE INTO sections (course_id, sec_no, class_limit, teaching_team_id)
+		VALUES (?, ?, ?, ?)
+		`,
+		[ courseOne, courseOneSection, courseOneSectionLimit, teachingTeamId ]
+	);
+	db.execute(
+		`
+		INSERT IGNORE INTO sections (course_id, sec_no, class_limit, teaching_team_id)
+		VALUES (?, ?, ?, ?)
+		`,
+		[ courseTwo, courseTwoSection, courseTwoSectionLimit, teachingTeamId ]
+	);
+	db.execute(
+		`
+		INSERT IGNORE INTO sections (course_id, sec_no, class_limit, teaching_team_id)
+		VALUES (?, ?, ?, ?)
+		`,
+		[ courseThree, courseThreeSection, courseThreeSectionLimit, teachingTeamId ]
+	);
 
-		db.execute(
-			`
-			INSERT INTO ta_teaching_teams (student_email, teaching_team_id)
-			VALUES (?, ?)
-			`,
-			[ email, teachingTeamId ]
-		);
+	// ENROLLS
+	db.execute(
+		`
+		INSERT IGNORE INTO enrolls (student_email, course_id, sec_no)
+		VALUES (?, ?, ?)
+		`,
+		[ email, courseOne, courseOneSection ]
+	);
+	db.execute(
+		`
+		INSERT IGNORE INTO enrolls (student_email, course_id, sec_no)
+		VALUES (?, ?, ?)
+		`,
+		[ email, courseTwo, courseTwoSection ]
+	);
+	db.execute(
+		`
+		INSERT IGNORE INTO enrolls (student_email, course_id, sec_no)
+		VALUES (?, ?, ?)
+		`,
+		[ email, courseThree, courseThreeSection ]
+	);
 
-		db.execute(
-			`
-			INSERT INTO homeworks (course_id, sec_no, hw_no, hw_details)
-			VALUES (?, ?, ?)
-			`,
-			[ courseOne, courseOneSection, courseOneHomeworkNo, courseOneHomeworkDetails ]
-		);
-		db.execute(
-			`
-			INSERT INTO homeworks (course_id, sec_no, hw_no, hw_details)
-			VALUES (?, ?, ?)
-			`,
-			[ courseTwo, courseTwoSection, courseTwoHomeworkNo, courseTwoHomeworkDetails ]
-		);
-		db.execute(
-			`
-			INSERT INTO homeworks (course_id, sec_no, hw_no, hw_details)
-			VALUES (?, ?, ?)
-			`,
-			[ courseThree, courseThreeSection, courseThreeHomeworkNo, courseThreeHomeworkDetails ]
-		);
+	// TA_TEACHING_TEAMS
+	db.execute(
+		`
+		INSERT IGNORE INTO ta_teaching_teams (student_email, teaching_team_id)
+		VALUES (?, ?)
+		`,
+		[ email, teachingTeamId ]
+	);
 
-		db.execute(
-			`
-			INSERT INTO homework_grades (student_email, course_id, sec_no, hw_no, grade)
-			VALUES (?, ?, ?, ?)
-			`,
-			[ email, courseOne, courseOneSection, courseOneHomeworkNo, courseOneHomeworkGrade ]
-		);
-		db.execute(
-			`
-			INSERT INTO homework_grades (student_email, course_id, sec_no, hw_no, grade)
-			VALUES (?, ?, ?, ?)
-			`,
-			[ email, courseTwo, courseTwoSection, courseTwoHomeworkNo, courseTwoHomeworkGrade ]
-		);
-		db.execute(
-			`
-			INSERT INTO homework_grades (student_email, course_id, sec_no, hw_no, grade)
-			VALUES (?, ?, ?, ?)
-			`,
-			[ email, courseThree, courseThreeSection, courseThreeHomeworkNo, courseThreeHomeworkGrade ]
-		);
+	// HOMEWORKS
+	db.execute(
+		`
+		INSERT IGNORE INTO homeworks (course_id, sec_no, hw_no, hw_details)
+		VALUES (?, ?, ?, ?)
+		`,
+		[ courseOne, courseOneSection, courseOneHomeworkNo, courseOneHomeworkDetails ]
+	);
+	db.execute(
+		`
+		INSERT IGNORE INTO homeworks (course_id, sec_no, hw_no, hw_details)
+		VALUES (?, ?, ?, ?)
+		`,
+		[ courseTwo, courseTwoSection, courseTwoHomeworkNo, courseTwoHomeworkDetails ]
+	);
+	db.execute(
+		`
+		INSERT IGNORE INTO homeworks (course_id, sec_no, hw_no, hw_details)
+		VALUES (?, ?, ?, ?)
+		`,
+		[ courseThree, courseThreeSection, courseThreeHomeworkNo, courseThreeHomeworkDetails ]
+	);
 
-		db.execute(
-			`
-			INSERT INTO exams (course_id, sec_no, exam_no, exam_details)
-			VALUES (?, ?, ?, ?)
-			`,
-			[ courseOne, courseOneSection, courseOneExamNo, courseOneExamDetails ]
-		);
-		db.execute(
-			`
-			INSERT INTO exams (course_id, sec_no, exam_no, exam_details)
-			VALUES (?, ?, ?, ?)
-			`,
-			[ courseTwo, courseTwoSection, courseTwoExamNo, courseTwoExamDetails ]
-		);
-		db.execute(
-			`
-			INSERT INTO exams (course_id, sec_no, exam_no, exam_details)
-			VALUES (?, ?, ?, ?)
-			`,
-			[ courseThree, courseThreeSection, courseThreeExamNo, courseThreeExamDetails ]
-		);
+	// HOMEWORK_GRADES
+	db.execute(
+		`
+		INSERT IGNORE INTO homework_grades (student_email, course_id, sec_no, hw_no, grade)
+		VALUES (?, ?, ?, ?, ?)
+		`,
+		[ email, courseOne, courseOneSection, courseOneHomeworkNo, courseOneHomeworkGrade ]
+	);
+	db.execute(
+		`
+		INSERT IGNORE INTO homework_grades (student_email, course_id, sec_no, hw_no, grade)
+		VALUES (?, ?, ?, ?, ?)
+		`,
+		[ email, courseTwo, courseTwoSection, courseTwoHomeworkNo, courseTwoHomeworkGrade ]
+	);
+	db.execute(
+		`
+		INSERT IGNORE INTO homework_grades (student_email, course_id, sec_no, hw_no, grade)
+		VALUES (?, ?, ?, ?, ?)
+		`,
+		[ email, courseThree, courseThreeSection, courseThreeHomeworkNo, courseThreeHomeworkGrade ]
+	);
 
-		db.execute(
-			`
-			INSERT INTO exam_grades (student_email, course_id, sec_no, exam_no, grades)
-			VALUES (?, ?, ?, ?, ?)
-			`,
-			[ email, courseOne, courseOneSection, courseOneExamNo, courseOneExamGrade ]
-		);
-		db.execute(
-			`
-			INSERT INTO exam_grades (student_email, course_id, sec_no, exam_no, grades)
-			VALUES (?, ?, ?, ?, ?)
-			`,
-			[ email, courseTwo, courseTwoSection, courseTwoExamNo, courseTwoExamGrade ]
-		);
-		db.execute(
-			`
-			INSERT INTO exam_grades (student_email, course_id, sec_no, exam_no, grades)
-			VALUES (?, ?, ?, ?, ?)
-			`,
-			[ email, courseThree, courseThreeSection, courseThreeExamNo, courseThreeExamGrade ]
-		);
+	// EXAMS
+	db.execute(
+		`
+		INSERT IGNORE INTO exams (course_id, sec_no, exam_no, exam_details)
+		VALUES (?, ?, ?, ?)
+		`,
+		[ courseOne, courseOneSection, courseOneExamNo, courseOneExamDetails ]
+	);
+	db.execute(
+		`
+		INSERT IGNORE INTO exams (course_id, sec_no, exam_no, exam_details)
+		VALUES (?, ?, ?, ?)
+		`,
+		[ courseTwo, courseTwoSection, courseTwoExamNo, courseTwoExamDetails ]
+	);
+	db.execute(
+		`
+		INSERT IGNORE INTO exams (course_id, sec_no, exam_no, exam_details)
+		VALUES (?, ?, ?, ?)
+		`,
+		[ courseThree, courseThreeSection, courseThreeExamNo, courseThreeExamDetails ]
+	);
 
-		*/
-	});
-};
+	// EXAM_GRADES
+	db.execute(
+		`
+		INSERT IGNORE INTO exam_grades (student_email, course_id, sec_no, exam_no, grade)
+		VALUES (?, ?, ?, ?, ?)
+		`,
+		[ email, courseOne, courseOneSection, courseOneExamNo, courseOneExamGrade ]
+	);
+	db.execute(
+		`
+		INSERT IGNORE INTO exam_grades (student_email, course_id, sec_no, exam_no, grade)
+		VALUES (?, ?, ?, ?, ?)
+		`,
+		[ email, courseTwo, courseTwoSection, courseTwoExamNo, courseTwoExamGrade ]
+	);
+	db.execute(
+		`
+		INSERT IGNORE INTO exam_grades (student_email, course_id, sec_no, exam_no, grade)
+		VALUES (?, ?, ?, ?, ?)
+		`,
+		[ email, courseThree, courseThreeSection, courseThreeExamNo, courseThreeExamGrade ]
+	);
+});
 
-processLine();
+fs.createReadStream('./csv/Posts_Comments.csv').pipe(csv()).on('data', (data) => {
+	let course = data.Courses;
+	let dropDeadline = data['Drop Deadline'];
+	let post = data['Post 1'];
+	let postBy = data['Post 1 By'];
+	let comment = data['Comment 1'];
+	let commentBy = data['Comment 1 By'];
+
+	db.execute(
+		`
+		INSERT IGNORE INTO comments (course_id, post_no, comment_no, student_email, comment_info)
+		VALUES (?, ?, ?, ?, ?)
+		`,
+		[ course, post, comment, postBy, commentBy ]
+	);
+
+	db.execute(
+		`
+		INSERT IGNORE INTO posts (course_id, post_no, student_email, post_info)
+		VALUES (?, ?, ?, ?)
+		`,
+		[ course, post, postBy, comment ]
+	);
+});
 
 /*
 truncate table students;
