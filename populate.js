@@ -20,10 +20,10 @@ fs.createReadStream('./csv/Professors.csv').pipe(csv()).on('data', (data) => {
 
 	db.execute(
 		`
-		  INSERT IGNORE INTO professors (email, password, name, age, gender, office_address, department, title)
-		  VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		  INSERT IGNORE INTO professors (email, password, name, age, gender, office_address, department, title, teaching)
+		  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 		`,
-		[ email, password, name, age, gender, office, department, title ]
+		[ email, password, name, age, gender, office, department, title, teaching ]
 	);
 
 	db.execute(
@@ -282,12 +282,22 @@ fs.createReadStream('./csv/Students_TA.csv').pipe(csv()).on('data', (data) => {
 });
 
 fs.createReadStream('./csv/Posts_Comments.csv').pipe(csv()).on('data', (data) => {
+	console.log(data);
+
 	let course = data.Courses;
 	let dropDeadline = data['Drop Deadline'];
 	let post = data['Post 1'];
 	let postBy = data['Post 1 By'];
 	let comment = data['Comment 1'];
 	let commentBy = data['Comment 1 By'];
+
+	db.execute(
+		`
+		UPDATE courses SET late_drop_deadline = (?)
+		WHERE courses.course_id = (?)
+		`,
+		[ dropDeadline, course ]
+	);
 
 	db.execute(
 		`
