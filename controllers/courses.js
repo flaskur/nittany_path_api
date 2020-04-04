@@ -1,4 +1,3 @@
-const sequelize = require('sequelize');
 const db = require('../database');
 
 const getCourses = function(request, response, next) {

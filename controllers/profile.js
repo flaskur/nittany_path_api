@@ -1,4 +1,3 @@
-const sequelize = require('sequelize');
 const db = require('../database');
 
 const getProfile = function(request, response, next) {
