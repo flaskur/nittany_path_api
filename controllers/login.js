@@ -7,6 +7,11 @@ const postLogin = function(request, response, next) {
 	const email = request.body.email;
 	const password = request.body.password;
 
+	if (!email || !password) {
+		response.json({ message: 'no email/password' });
+		return;
+	}
+
 	db.execute(
 		`
 		select students.email as email, students.password as password 
@@ -19,14 +24,15 @@ const postLogin = function(request, response, next) {
 		`,
 		[ email, email ],
 		(error, result) => {
-			if (error) throw error;
+			if (error) {
+				console.log('runs 2');
+				throw error;
+			}
 
 			// No valid email
 			if (result.length === 0) {
 				response.json({ message: 'user email does not exist' });
-				// const error = new Error('user email does not exist');
-				// error.statusCode = 401;
-				// throw error;
+				return;
 			}
 
 			let user = result[0];
@@ -34,9 +40,7 @@ const postLogin = function(request, response, next) {
 			// Passwords do not match
 			if (password !== user.password) {
 				response.json({ message: 'password is not correct' });
-				// const error = new Error('password is not correct');
-				// error.statusCode = 401;
-				// throw error;
+				return;
 			}
 
 			// We are authenticated, create jwt
@@ -47,7 +51,7 @@ const postLogin = function(request, response, next) {
 				process.env.KEY
 			);
 
-			response.status(200).json({
+			response.json({
 				email: user.email,
 				token: token
 			});
