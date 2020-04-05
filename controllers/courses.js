@@ -1,8 +1,23 @@
 const db = require('../database');
 
 const getCourses = function(request, response, next) {
-	// accesses all the information in the checking info table using sequelize, then returns the data as json. This should be protected so you should have a json token, but for now I'll disregard.
-	// sequelize, get the table that joins enrolls, courses, professors. Return the data as a json string to the client.
+	// We need to authenticate the jwt token. That should be handled by the isAuth middleware.
+	const email = request.email; // extracted from token by isAuth middleware
+
+	db.execute(
+		`
+		select enrolls.student_email, courses.course_id, courses.course_name, courses.course_description, courses.late_drop_deadline, professors.email, professors.name, professors.office_address
+		from enrolls join courses on (enrolls.course_id = courses.course_id)
+  	join professors on (courses.course_id = professors.teaching)
+		where enrolls.student_email = ?
+		`,
+		[ email ],
+		(error, result) => {
+			if (error) throw error;
+
+			response.json(result);
+		}
+	);
 };
 
 module.exports = {

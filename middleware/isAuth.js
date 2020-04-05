@@ -2,9 +2,7 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 const isAuth = function(request, response, next) {
-	// We expect a authorization header from the client side. Basically we extract that from the header, check if it's valid, if so, we run next() to continue with the normal controller.
-	const authHeader = request.get('authorization');
-	console.log(authHeader, 'authHeader');
+	const authHeader = request.headers.authorization;
 
 	if (!authHeader) {
 		const error = new Error('no auth header');
@@ -12,11 +10,9 @@ const isAuth = function(request, response, next) {
 		throw error;
 	}
 
-	// 'bearer token'
-	const token = authHeader.split(' ')[1];
-
+	let verifiedToken;
 	try {
-		const verifiedToken = jwt.verify(token, process.env.KEY);
+		verifiedToken = jwt.verify(authHeader, process.env.KEY);
 	} catch (error) {
 		error.statusCode = 500;
 		throw error;
@@ -30,5 +26,8 @@ const isAuth = function(request, response, next) {
 
 	// Attach the email to the request so we can access later on in the controllers. That means the jwt token must be set up with email on login.
 	request.email = verifiedToken.email;
+
 	next();
 };
+
+module.exports = isAuth;
