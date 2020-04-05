@@ -6,7 +6,7 @@ const getCourses = function(request, response, next) {
 
 	db.execute(
 		`
-		select enrolls.student_email, courses.course_id, courses.course_name, courses.course_description, courses.late_drop_deadline, professors.email, professors.name, professors.office_address
+		select enrolls.student_email, enrolls.sec_no, courses.course_id, courses.course_name, courses.course_description, courses.late_drop_deadline, professors.email, professors.name, professors.office_address
 		from enrolls join courses on (enrolls.course_id = courses.course_id)
   	join professors on (courses.course_id = professors.teaching)
 		where enrolls.student_email = ?

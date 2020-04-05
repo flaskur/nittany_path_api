@@ -1,9 +1,7 @@
-console.log('hello world');
-
 const csv = require('csv-parser');
 const fs = require('fs');
 const db = require('./database');
-const results = [ 'ender' ];
+const bcrypt = require('bcryptjs');
 
 fs.createReadStream('./csv/Professors.csv').pipe(csv()).on('data', (data) => {
 	let name = data.Name;
@@ -18,12 +16,15 @@ fs.createReadStream('./csv/Professors.csv').pipe(csv()).on('data', (data) => {
 	let teachingTeamId = data['Teaching Team ID'];
 	let teaching = data.Teaching;
 
+	let salt = bcrypt.genSaltSync(1);
+	let hashedPassword = bcrypt.hashSync(password, salt);
+
 	db.execute(
 		`
 		  INSERT IGNORE INTO professors (email, password, name, age, gender, office_address, department, title, teaching)
 		  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 		`,
-		[ email, password, name, age, gender, office, department, title, teaching ]
+		[ email, hashedPassword, name, age, gender, office, department, title, teaching ]
 	);
 
 	db.execute(
@@ -92,13 +93,16 @@ fs.createReadStream('./csv/Students_TA.csv').pipe(csv()).on('data', (data) => {
 	let courseThreeExamGrade = data['Course 3 EXAM_Grade'];
 	let teachingTeamId = data['Teaching Team ID'];
 
+	let salt = bcrypt.genSaltSync(1);
+	let hashedPassword = bcrypt.hashSync(password, salt);
+
 	// STUDENTS
 	db.execute(
 		`
 			INSERT IGNORE INTO students (email, password, name, age, gender, major, street, zipcode)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 		`,
-		[ email, password, fullName, age, gender, major, street, zip ]
+		[ email, hashedPassword, fullName, age, gender, major, street, zip ]
 	);
 
 	// ZIPCODES
@@ -282,8 +286,6 @@ fs.createReadStream('./csv/Students_TA.csv').pipe(csv()).on('data', (data) => {
 });
 
 fs.createReadStream('./csv/Posts_Comments.csv').pipe(csv()).on('data', (data) => {
-	console.log(data);
-
 	let course = data.Courses;
 	let dropDeadline = data['Drop Deadline'];
 	let post = data['Post 1'];

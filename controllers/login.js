@@ -38,10 +38,14 @@ const postLogin = function(request, response, next) {
 			let user = result[0];
 
 			// Passwords do not match
-			if (password !== user.password) {
-				response.json({ message: 'password is not correct' });
-				return;
-			}
+			bcrypt.compare(password, user.password, (error, success) => {
+				if (error) throw error; // the comparision actually fails
+
+				if (!success) {
+					response.json({ message: 'password is not correct' });
+					return;
+				}
+			});
 
 			// We are authenticated, create jwt
 			const token = jwt.sign(
