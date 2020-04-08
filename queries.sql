@@ -12,3 +12,6 @@ UNION
   from professors
   where email = '';
 
+select professors.name, professors.teaching, courses.course_name, courses.course_description, courses.late_drop_deadline
+from professors join courses on (professors.teaching = courses.course_id)
+where professors.email = '';

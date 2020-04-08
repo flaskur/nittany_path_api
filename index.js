@@ -4,6 +4,7 @@ const cors = require('cors');
 const loginRoutes = require('./routes/login');
 const profileRoutes = require('./routes/profile');
 const coursesRoutes = require('./routes/courses');
+const facultyRoutes = require('./routes/faculty');
 const db = require('./pool');
 
 const app = express();
@@ -26,5 +27,6 @@ app.use(cors());
 app.use('/login', loginRoutes);
 app.use('/profile', profileRoutes);
 app.use('/courses', coursesRoutes);
+app.use('/faculty', facultyRoutes);
 
 app.listen(3001, () => console.log('listening on port 3001'));
