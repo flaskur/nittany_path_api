@@ -20,6 +20,39 @@ const getCourses = function(request, response, next) {
 	);
 };
 
+const getAssignments = function(request, response, next) {
+	const { course, section, type } = request.params;
+
+	if (type === 'homeworks') {
+		db.execute(
+			`
+			select * from homeworks
+			where homeworks.course_id = ? and homeworks.sec_no = ?
+			`,
+			[ course, section ],
+			(error, result) => {
+				if (error) throw error;
+
+				response.json(result);
+			}
+		);
+	} else if (type === 'exams') {
+		db.execute(
+			`
+			select * from exams
+			where exams.course_id = ? and exams.sec_no = ?
+			`,
+			[ course, section ],
+			(error, result) => {
+				if (error) throw error;
+
+				response.json(result);
+			}
+		);
+	}
+};
+
 module.exports = {
-	getCourses
+	getCourses,
+	getAssignments
 };
