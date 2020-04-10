@@ -52,7 +52,39 @@ const getAssignments = function(request, response, next) {
 	}
 };
 
+const getGrades = function(request, response, next) {
+	const email = request.email;
+	const { course, section, type } = request.params;
+
+	if (type === 'homework_grades') {
+		db.execute(
+			`
+			select * from homework_grades
+			where homework_grades.student_email = ? and homework_grades.course_id = ? and homework_grades.sec_no = ?
+			`,
+			[ email, course, section ],
+			(error, result) => {
+				if (error) throw error;
+				response.json(result);
+			}
+		);
+	} else if (type === 'exam_grades') {
+		db.execute(
+			`
+			select * from exam_grades
+			where exam_grades.student_email = ? and exam_grades.course_id = ? and exam_grades.sec_no = ?
+			`,
+			[ email, course, section ],
+			(error, result) => {
+				if (error) throw error;
+				response.json(result);
+			}
+		);
+	}
+};
+
 module.exports = {
 	getCourses,
-	getAssignments
+	getAssignments,
+	getGrades
 };

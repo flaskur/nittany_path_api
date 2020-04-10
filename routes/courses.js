@@ -6,4 +6,6 @@ coursesRouter.get('/', isAuth, coursesController.getCourses);
 
 coursesRouter.get('/:course/:section/assignments/:type', isAuth, coursesController.getAssignments);
 
+coursesRouter.get('/:course/:section/grades/:type', isAuth, coursesController.getGrades);
+
 module.exports = coursesRouter;
