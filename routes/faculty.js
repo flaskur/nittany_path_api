@@ -13,4 +13,7 @@ facultyRouter.post('/:course/:section/assignments/exams', isAuth, facultyControl
 facultyRouter.get('/:course/:section/assignments/homework_max', isAuth, facultyController.getFacultyHomeworkMax);
 facultyRouter.get('/:course/:section/assignments/exam_max', isAuth, facultyController.getFacultyExamMax);
 
+facultyRouter.get('/:course/:section/grades/:type/:number', isAuth, facultyController.getGrades);
+facultyRouter.patch('/:course/:section/grades/:type/:number', isAuth, facultyController.patchGrades);
+
 module.exports = facultyRouter;
