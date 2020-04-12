@@ -146,35 +146,32 @@ const getGrades = function(request, response, next) {
 
 const patchGrades = function(request, response, next) {
 	const { course, section, type, number } = request.params;
-	const { newGrade } = request.body;
-	const email = request.email;
-
-	console.log('patch', course, section, type, number, newGrade, email);
+	const { newGrade, email } = request.body;
 
 	if (type === 'homework') {
-		// this update query isn't working for some reason. maybe problem with mysql driver, maybe no execute?
 		db.execute(
 			`
 			update homework_grades
 			set homework_grades.grade = ?
 			where homework_grades.student_email = ? and homework_grades.course_id = ? and homework_grades.sec_no = ? and homework_grades.hw_no = ?
 			`,
-			[ newGrade, email, course, parseInt(section, 10), parseInt(number, 10) ],
+			[ newGrade, email, course, section, number ],
 			(err) => {
 				if (err) throw error;
-				response.json({ message: 'homework posts finsihes' });
+				response.json({ message: 'successfully updated homework' });
 			}
 		);
 	} else if (type === 'exam') {
 		db.execute(
 			`
-			update exam_grades set exam_grades.grade = ? where exam_grades.student_email = ? and exam_grades.course_id = ? and exam_grades.sec_no = ? and exam_grades.exam_no = ?
+			update exam_grades
+			set exam_grades.grade = ?
+			where exam_grades.student_email = ? and exam_grades.course_id = ? and exam_grades.sec_no = ? and exam_grades.exam_no = ?
 			`,
-			[ newGrade.toString(), email.toString(), course.toString(), parseInt(section, 10), parseInt(number, 10) ],
-			(error, result) => {
+			[ newGrade, email, course, section, number ],
+			(error) => {
 				if (error) throw error;
-				console.log(result);
-				response.json({ message: 'exam patch' });
+				response.json({ message: 'successfully updated exam' });
 			}
 		);
 	}
