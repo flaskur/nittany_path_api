@@ -83,8 +83,44 @@ const getGrades = function(request, response, next) {
 	}
 };
 
+const getPosts = function(request, response, next) {
+	const { course } = request.params;
+
+	db.execute(
+		`
+		select * from posts
+		where posts.course_id = ?
+		`,
+		[ course ],
+		(error, result) => {
+			if (error) throw error;
+			response.json(result);
+		}
+	);
+};
+
+const postPosts = function(request, response, next) {
+	const { course } = request.params;
+	const email = request.email;
+	const { postInfo } = request.body;
+
+	db.execute(
+		`
+		insert into posts (course_id, post_no, student_email, post_info)
+		values (?, ?, ?, ?)
+		`,
+		[ course, null, email, postInfo ],
+		(error) => {
+			if (error) throw error;
+			response.json({ message: 'successfully made a forum post' });
+		}
+	);
+};
+
 module.exports = {
 	getCourses,
 	getAssignments,
-	getGrades
+	getGrades,
+	getPosts,
+	postPosts
 };

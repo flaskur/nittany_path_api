@@ -16,4 +16,7 @@ facultyRouter.get('/:course/:section/assignments/exam_max', isAuth, facultyContr
 facultyRouter.get('/:course/:section/grades/:type/:number', isAuth, facultyController.getGrades);
 facultyRouter.patch('/:course/:section/grades/:type/:number', isAuth, facultyController.patchGrades);
 
+facultyRouter.get('/:course/:section/forum', isAuth, facultyController.getPosts);
+facultyRouter.post('/:course/:section/forum', isAuth, facultyController.postPosts);
+
 module.exports = facultyRouter;

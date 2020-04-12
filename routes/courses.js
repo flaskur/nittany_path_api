@@ -8,4 +8,7 @@ coursesRouter.get('/:course/:section/assignments/:type', isAuth, coursesControll
 
 coursesRouter.get('/:course/:section/grades/:type', isAuth, coursesController.getGrades);
 
+coursesRouter.get('/:course/:section/forum', isAuth, coursesController.getPosts);
+coursesRouter.post('/:course/:section/forum', isAuth, coursesController.postPosts);
+
 module.exports = coursesRouter;
