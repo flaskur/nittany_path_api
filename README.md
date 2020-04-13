@@ -7,6 +7,6 @@ I organized the express web server to use an isAuth middleware whenever accessin
 
 The routes themselves implement the REST architecture and are individually handled by the logic inside of the controllers. Many of the controller functions query to the database and send the proper json string response back to the client side.
 
-Click Below To View Frontend Source Code
-[UI SOURCE CODE](https://github.com/flaskur/nittany_path)
+Click [UI SOURCE CODE](https://github.com/flaskur/nittany_path) To View Frontend Source Code
+
 
