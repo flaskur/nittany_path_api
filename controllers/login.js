@@ -25,7 +25,6 @@ const postLogin = function(request, response, next) {
 		[ email, email ],
 		(error, result) => {
 			if (error) {
-				console.log('runs 2');
 				throw error;
 			}
 
@@ -37,27 +36,26 @@ const postLogin = function(request, response, next) {
 
 			let user = result[0];
 
-			// Passwords do not match
+			// THIS IS ASYNCHRONOUS
 			bcrypt.compare(password, user.password, (error, success) => {
 				if (error) throw error; // the comparision actually fails
 
 				if (!success) {
-					response.json({ message: 'password is not correct' });
-					return;
+					return response.json({ message: 'password is not correct' });
 				}
-			});
 
-			// We are authenticated, create jwt
-			const token = jwt.sign(
-				{
-					email: user.email
-				},
-				process.env.KEY
-			);
+				// We are authenticated, create jwt
+				const token = jwt.sign(
+					{
+						email: user.email
+					},
+					process.env.KEY
+				);
 
-			response.json({
-				email: user.email,
-				token: token
+				response.json({
+					email: user.email,
+					token: token
+				});
 			});
 		}
 	);

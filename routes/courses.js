@@ -11,4 +11,8 @@ coursesRouter.get('/:course/:section/grades/:type', isAuth, coursesController.ge
 coursesRouter.get('/:course/:section/forum', isAuth, coursesController.getPosts);
 coursesRouter.post('/:course/:section/forum', isAuth, coursesController.postPosts);
 
+coursesRouter.get('/:course/:section/late_drop_deadline', isAuth, coursesController.getDeadline);
+
+coursesRouter.delete('/:course/:section', isAuth, coursesController.deleteCourse);
+
 module.exports = coursesRouter;

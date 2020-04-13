@@ -109,7 +109,7 @@ const postPosts = function(request, response, next) {
 		insert into posts (course_id, post_no, student_email, post_info)
 		values (?, ?, ?, ?)
 		`,
-		[ course, null, email, postInfo ],
+		[ course, '', email, postInfo ],
 		(error) => {
 			if (error) throw error;
 			response.json({ message: 'successfully made a forum post' });
@@ -117,10 +117,58 @@ const postPosts = function(request, response, next) {
 	);
 };
 
+const getDeadline = function(request, response, next) {
+	const { course } = request.params;
+
+	db.execute(
+		`
+		select courses.late_drop_deadline from courses
+		where courses.course_id = ?
+		`,
+		[ course ],
+		(error, result) => {
+			if (error) throw error;
+			response.json(result[0]);
+		}
+	);
+};
+
+const deleteCourse = function(request, response, next) {
+	const { course, section } = request.params;
+	const email = request.email;
+
+	// Our job is to remove this course from this person's enrollment, and remove any posts that they posted on this particular course.
+	db.execute(
+		`
+		delete from enrolls
+		where enrolls.student_email = ? and enrolls.course_id = ? and enrolls.sec_no = ?
+		`,
+		[ email, course, section ],
+		(error) => {
+			if (error) throw error;
+		}
+	);
+
+	db.execute(
+		`
+		delete from posts
+		where posts.course_id = ? and posts.student_email = ?
+		`,
+		[ course, email ],
+		(error) => {
+			if (error) throw error;
+		}
+	);
+
+	response.json({ message: 'successfully deleted the course + posts' });
+};
+
 module.exports = {
 	getCourses,
 	getAssignments,
 	getGrades,
 	getPosts,
-	postPosts
+	postPosts,
+	getDeadline,
+	deleteCourse
 };
